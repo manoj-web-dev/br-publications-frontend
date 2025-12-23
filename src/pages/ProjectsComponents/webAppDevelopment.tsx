@@ -1,5 +1,5 @@
 import React from 'react';
-import './webappdevelopment.css';
+import './webAppDevelopment.css';
 
 const WebAppDevelopment: React.FC = () => {
   const toggleFaq = (e: React.MouseEvent<HTMLDivElement>) => {
