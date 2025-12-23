@@ -20,21 +20,27 @@ export default function BookCarousel() {
     const loadBooks = async () => {
       try {
         // Dynamically import all images from the books folder
-        const imageModules = import.meta.glob('/src/assets/books/*.{png,jpg,jpeg,webp}');
+        // Use eager: true to get the resolved modules (with final URLs) immediately
+        const imageModules = import.meta.glob('/src/assets/books/*.{png,jpg,jpeg,webp}', { eager: true });
         const imagePaths = Object.keys(imageModules);
         const booksData = booksList;
         
         // Match books with their images based on title
         const booksWithImages = booksData.map((book) => {
           const normalizedTitle = book.title.toLowerCase().replace(/[^a-z0-9]/g, '');
-          const matchingImage = imagePaths.find(path => {
-            const filename = path.split('/').pop()?.split('.')[0].toLowerCase().replace(/[^a-z0-9]/g, '') || '';
+          
+          const matchingPath = imagePaths.find(path => {
+            // Fix: Replace only the last extension (handles filenames like "Node.js.jpg" correctly)
+            const filename = path.split('/').pop()?.replace(/\.[^/.]+$/, "").toLowerCase().replace(/[^a-z0-9]/g, '') || '';
             return filename === normalizedTitle;
           });
 
+          // Get the actual URL from the module's default export
+          const resolvedUrl = matchingPath ? (imageModules[matchingPath] as { default: string }).default : null;
+
           return {
             ...book,
-            image: matchingImage || '/placeholder-book.png'
+            image: resolvedUrl || '/placeholder-book.png'
           };
         });
 
@@ -157,4 +163,5 @@ export default function BookCarousel() {
       </div>
     </section>
   );
+
 }
