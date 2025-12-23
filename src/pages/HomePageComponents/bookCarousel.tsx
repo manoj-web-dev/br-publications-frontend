@@ -113,6 +113,8 @@ export default function BookCarousel() {
                     src={book.image}
                     alt={book.title}
                     className="book-image"
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => {
                       e.currentTarget.src = '/placeholder-book.png';
                     }}
@@ -165,3 +167,4 @@ export default function BookCarousel() {
   );
 
 }
+
